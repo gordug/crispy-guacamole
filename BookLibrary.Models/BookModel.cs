@@ -23,11 +23,22 @@ public class BookModel
         PublicationYear = publicationYear;
     }
 
+    public BookModel()
+    {
+        Id = 0;
+        Title = string.Empty;
+        Authors = new List<AuthorModel>();
+        Genres = new List<GenreModel>();
+        Isbn = string.Empty;
+        PublicationYear = DateTime.Now.Year;
+    }
+
+
     public int Id { get; private set; }
-    public string Title { get; set; } = string.Empty;
-    public List<AuthorModel> Authors { get; set; } = new();
-    public List<GenreModel> Genres { get; set; } = new();
-    public string Isbn { get; set; } = string.Empty;
+    public string Title { get; set; }
+    public List<AuthorModel> Authors { get; set; }
+    public List<GenreModel> Genres { get; set; }
+    public string Isbn { get; set; }
     public int PublicationYear { get; set; }
 
     public override string ToString()

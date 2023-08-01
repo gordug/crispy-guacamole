@@ -6,4 +6,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BookLibrary.BLL\BookLibrary.BLL.csproj" />
+      <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj" />
+      <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj" />
+    </ItemGroup>
+
 </Project>

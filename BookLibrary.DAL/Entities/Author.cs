@@ -3,13 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookLibrary.DAL.Entities;
 
-public class Author : IValidatableObject
+public class Author : IValidatableObject, IEntity
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ID { get; set; }
+    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public int ID { get; init; }
 
-    [Required] [MaxLength(50)] public string FirstName { get; set; } = string.Empty;
+    [Required,MaxLength(50)]  public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
 
     public ICollection<Book> Books { get; set; } = new List<Book>();

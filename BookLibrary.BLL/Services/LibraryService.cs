@@ -1,9 +1,10 @@
 ﻿using BookLibrary.BLL.Interfaces;
+using BookLibrary.DAL.Entities;
 using BookLibrary.DAL.Repositories;
 
 namespace BookLibrary.BLL.Services;
 
-public abstract class LibraryService<T, U> : ILibraryService<T> where T : class where U : class
+public abstract class LibraryService<T, U> : ILibraryService<T> where T : class where U : class, IEntity
 {
     internal readonly IRepository<U> _repository;
 
@@ -41,4 +42,14 @@ public abstract class LibraryService<T, U> : ILibraryService<T> where T : class 
     internal abstract U? MapToEntity(T? entity);
     internal abstract IEnumerable<T?>? MapToModel(IEnumerable<U?>? entities);
     internal abstract IEnumerable<U?>? MapToEntity(IEnumerable<T?>? entities);
+
+    public void Dispose()
+    {
+        _repository.Dispose();
+    }
+
+    ~LibraryService()
+    {
+        Dispose();
+    }
 }

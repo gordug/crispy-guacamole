@@ -1,6 +1,8 @@
-﻿namespace BookLibrary.DAL.Repositories;
+﻿using BookLibrary.DAL.Entities;
 
-public interface IRepository<T> where T : class
+namespace BookLibrary.DAL.Repositories;
+
+public interface IRepository<T> : IDisposable where T : IEntity
 {
     Task<IEnumerable<T?>> GetAllAsync();
     ValueTask<T?> GetAsync(int id);

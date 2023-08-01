@@ -3,11 +3,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BookLibrary.DAL.Entities;
 
-public class Book : IValidatableObject
+public class Book : IValidatableObject, IEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; init; }
+    public int ID { get; init; }
 
     [Required] [MaxLength(200)] public string Title { get; set; } = string.Empty;
     public ICollection<Author> Authors { get; set; } = default!;
@@ -29,7 +29,7 @@ public class Book : IValidatableObject
     {
         return new Book
         {
-            Id = Id,
+            ID = ID,
             Title = Title,
             Authors = Authors,
             Genres = Genres,

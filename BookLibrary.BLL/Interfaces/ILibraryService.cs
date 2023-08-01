@@ -1,6 +1,6 @@
 ﻿namespace BookLibrary.BLL.Interfaces;
 
-public interface ILibraryService<T>
+public interface ILibraryService<T> : IDisposable
 {
     public Task<IEnumerable<T?>?> GetAllAsync();
     public Task<T?> GetAsync(int id);

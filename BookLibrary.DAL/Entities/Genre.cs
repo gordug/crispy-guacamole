@@ -2,9 +2,9 @@
 
 namespace BookLibrary.DAL.Entities;
 
-public class Genre : IValidatableObject
+public class Genre : IValidatableObject, IEntity
 {
-    public int ID { get; set; }
+    public int ID { get; init; }
     public string Name { get; set; } = string.Empty;
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

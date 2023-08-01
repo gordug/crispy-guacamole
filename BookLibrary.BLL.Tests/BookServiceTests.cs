@@ -41,7 +41,7 @@ public class BookServiceTests
     private Book TestBook =>
         new()
         {
-            Id = 1,
+            ID = 1,
             Title = "Test Book",
             Authors = Authors.Select(x => new Author { ID = 1, FirstName = x.FirstName, LastName = x.LastName })
                 .ToList(),

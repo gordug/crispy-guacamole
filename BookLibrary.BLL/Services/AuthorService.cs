@@ -8,7 +8,7 @@ using BookLibrary.Models;
 
 namespace BookLibrary.BLL.Services;
 
-internal class AuthorService : LibraryService<AuthorModel, Author>, IAuthorService
+internal sealed class AuthorService : LibraryService<AuthorModel, Author>, IAuthorService
 {
     public AuthorService(IRepository<Author> authorRepository) : base(authorRepository)
     {

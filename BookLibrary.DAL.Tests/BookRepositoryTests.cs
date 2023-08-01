@@ -21,7 +21,7 @@ public class BookRepositoryTests
         // Test book object
         _testBook = new Book
         {
-            Id = 1,
+            ID = 1,
             Title = "Test Book",
             Authors = new List<Author>
             {
@@ -53,7 +53,7 @@ public class BookRepositoryTests
 
     private async Task SetupMockData()
     {
-        var book = await _repository.GetAsync(_testBook.Id);
+        var book = await _repository.GetAsync(_testBook.ID);
         if (book is not null) return;
         await _repository.AddAsync(_testBook);
     }
@@ -64,7 +64,7 @@ public class BookRepositoryTests
         // Arrange
         var book = new Book
         {
-            Id = 2,
+            ID = 2,
             Title = "Test Book 2",
             Authors = new List<Author>
             {
@@ -94,14 +94,14 @@ public class BookRepositoryTests
         Assert.That(result, Is.EqualTo(book));
 
         // Cleanup
-        await _repository.DeleteAsync(book.Id);
+        await _repository.DeleteAsync(book.ID);
     }
 
     [Test]
     public async Task Get_ShouldReturnCorrectBook()
     {
         // Act
-        var result = await _repository.GetAsync(_testBook.Id);
+        var result = await _repository.GetAsync(_testBook.ID);
 
         // Assert
         Assert.That(result, Is.EqualTo(_testBook));
@@ -111,8 +111,8 @@ public class BookRepositoryTests
     public async Task Delete_ShouldRemoveSpecifiedBook()
     {
         // Act
-        await _repository.DeleteAsync(_testBook.Id);
-        var result = await _repository.GetAsync(_testBook.Id);
+        await _repository.DeleteAsync(_testBook.ID);
+        var result = await _repository.GetAsync(_testBook.ID);
         // Assert
         Assert.That(result, Is.Null);
 
@@ -126,7 +126,7 @@ public class BookRepositoryTests
         // Arrange
         var book = new Book
         {
-            Id = 3,
+            ID = 3,
             Title = "Test Book 3",
             Authors = new List<Author>
             {
@@ -148,7 +148,7 @@ public class BookRepositoryTests
             Isbn = "987654321",
             PublicationYear = 2021
         };
-        await _repository.AddAsync(book);
+        book = await _repository.AddAsync(book);
         // Act
         book.Title = "Updated Test Book";
         var result = await _repository.UpdateAsync(book);
@@ -158,7 +158,7 @@ public class BookRepositoryTests
         Assert.That(result?.Title, Is.EqualTo("Updated Test Book"));
 
         // Cleanup
-        await _repository.DeleteAsync(book.Id);
+        await _repository.DeleteAsync(book.ID);
     }
 
     [Test]

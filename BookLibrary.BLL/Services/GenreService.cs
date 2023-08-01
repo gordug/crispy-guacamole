@@ -8,7 +8,7 @@ using BookLibrary.Models;
 
 namespace BookLibrary.BLL.Services;
 
-public class GenreService : LibraryService<GenreModel, Genre>, IGenreService
+public sealed class GenreService : LibraryService<GenreModel, Genre>, IGenreService
 {
     public GenreService(IRepository<Genre> genreRepository) : base(genreRepository)
     {

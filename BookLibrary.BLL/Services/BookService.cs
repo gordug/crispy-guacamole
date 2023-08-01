@@ -8,7 +8,7 @@ using BookLibrary.Models;
 
 namespace BookLibrary.BLL.Services;
 
-internal class BookService : LibraryService<BookModel, Book>, IBookService
+internal sealed class BookService : LibraryService<BookModel, Book>, IBookService
 {
     private readonly ILibraryService<Author> _authorService;
     private readonly ILibraryService<Genre> _genreService;
@@ -63,7 +63,7 @@ internal class BookService : LibraryService<BookModel, Book>, IBookService
         return book switch
         {
             null => null,
-            _ => new BookModel(book.Id, book.Title,
+            _ => new BookModel(book.ID, book.Title,
                 (from author in book.Authors select new AuthorModel(author.ID, author.FirstName, author.LastName))
                 .ToList(), (from genre in book.Genres select new GenreModel(genre.ID, genre.Name)).ToList(), book.Isbn,
                 book.PublicationYear)
@@ -77,7 +77,7 @@ internal class BookService : LibraryService<BookModel, Book>, IBookService
             null => null,
             _ => new Book
             {
-                Id = bookModel.Id,
+                ID = bookModel.Id,
                 Title = bookModel.Title,
                 Authors =
                     (from author in bookModel.Authors select _authorService.GetAsync(author.Id).Result).ToList(),
