@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj"/>
+        <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="JetBrains.ReSharper.TestRunner.Merged">
+            <HintPath>..\..\..\..\..\Program Files\JetBrains\Rider\r2r\2023.1.3R\E02A6D94346777569DE0BD5951BBF4C\TestRunner\netcoreapp3.0\JetBrains.ReSharper.TestRunner.Merged.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+</Project>
