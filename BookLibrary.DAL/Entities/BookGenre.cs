@@ -4,6 +4,7 @@ namespace BookLibrary.DAL.Entities;
 
 public class BookGenre : IValidatableObject
 {
+    
     public int BookID { get; set; }
     public Book Book { get; set; } = default!;
     public int GenreID { get; set; }

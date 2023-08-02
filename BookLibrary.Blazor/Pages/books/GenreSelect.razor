@@ -1,0 +1,39 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<select id="@id" class="@Class" multiple @onchange="UpdateSelectedGenres">
+    @if (AvailableGenres is not {} || !AvailableGenres.Any())
+    {
+        <option value="" disabled>No genres found</option>        
+    }
+    else
+    {
+        @foreach (var genre in AvailableGenres)
+        {
+            <option value="@genre.Id">@genre.Name</option>
+        }
+    }
+</select>
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    
+    [Parameter]
+    public string Class { get; set; }
+    
+    [Parameter]
+    public List<int>? SelectedGenreIds { get; set; }
+    
+    [Parameter, Required]
+    public List<GenreModel> AvailableGenres { get; set; }
+
+    [Parameter]
+    public EventCallback<List<int>> SelectedGenreIdsChanged { get; set; }
+
+    private async Task UpdateSelectedGenres(ChangeEventArgs e)
+    {
+        var selectedOptions = e.Value as IEnumerable<string>;
+        SelectedGenreIds = selectedOptions?.Select(int.Parse).ToList();
+        await SelectedGenreIdsChanged.InvokeAsync(SelectedGenreIds);
+    }
+}

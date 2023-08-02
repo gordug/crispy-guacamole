@@ -34,7 +34,7 @@ public class GenreRepositoryTests
     private async Task SetupMockData()
     {
         var genre = await _repository.GetAsync(_testGenre.ID);
-        if (genre is not null) return;
+        if (genre is { }) return;
         await _repository.AddAsync(_testGenre);
     }
 

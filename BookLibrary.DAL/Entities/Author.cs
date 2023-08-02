@@ -5,7 +5,7 @@ namespace BookLibrary.DAL.Entities;
 
 public class Author : IValidatableObject, IEntity
 {
-    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("AuthorId")]
     public int ID { get; init; }
 
     [Required,MaxLength(50)]  public string FirstName { get; set; } = string.Empty;

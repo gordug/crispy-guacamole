@@ -9,15 +9,14 @@ namespace BookLibrary.BLL.Tests;
 
 public class BookServiceTests
 {
-    private readonly Mock<ILibraryService<Author>> _mockAuthorService;
     private readonly Mock<IRepository<Book>> _mockBookRepository;
-    private readonly Mock<ILibraryService<Genre>> _mockGenreService;
+    private readonly Mock<IMapper<BookModel, Book>> _mockBookMapper;
 
     public BookServiceTests()
     {
+        var mockMappers = new MockMappers.MockMappers();
         _mockBookRepository = new Mock<IRepository<Book>>();
-        _mockAuthorService = new Mock<ILibraryService<Author>>();
-        _mockGenreService = new Mock<ILibraryService<Genre>>();
+        _mockBookMapper = mockMappers.GetBookMapper();
     }
 
     private List<AuthorModel> Authors =>
@@ -55,8 +54,6 @@ public class BookServiceTests
     public void Setup()
     {
         _mockBookRepository.Reset();
-        _mockAuthorService.Reset();
-        _mockGenreService.Reset();
     }
 
     [Test]
@@ -67,7 +64,7 @@ public class BookServiceTests
         _mockBookRepository.Setup(x => x.GetAsync(bookId)).ReturnsAsync(TestBook);
 
         var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
+            new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
 
         // Act
         var result = bookService.GetAsync(bookId);
@@ -84,7 +81,7 @@ public class BookServiceTests
         _mockBookRepository.Setup(x => x.GetAsync(bookId)).ReturnsAsync((Book?)null);
 
         var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
+            new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
 
         // Act
         var result = await bookService.GetAsync(bookId);
@@ -101,7 +98,7 @@ public class BookServiceTests
         _mockBookRepository.Setup(x => x.GetAsync(bookId)).ReturnsAsync(TestBook);
 
         var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
+            new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
 
         // Act
         var result = await bookService.GetAsync(bookId);
@@ -127,7 +124,7 @@ public class BookServiceTests
         _mockBookRepository.Setup(x => x.UpdateAsync(TestBook)).Returns(() => Task.FromResult(TestBook));
 
         var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
+            new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
 
         // Act
         await bookService.UpdateAsync(book);
@@ -146,71 +143,12 @@ public class BookServiceTests
         _mockBookRepository.Setup(x => x.DeleteAsync(bookId)).Returns(() => Task.FromResult(TestBook));
 
         var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
+            new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
 
         // Act
         await bookService.DeleteAsync(bookId);
 
         // Assert
         _mockBookRepository.Verify(x => x.DeleteAsync(bookId), Times.Once);
-    }
-
-    [Test]
-    public void ConvertToBookModel_ReturnsBookModel()
-    {
-        // Arrange
-        var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
-
-        // Act
-        var result = bookService.MapToModel(TestBook);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Title, Is.EqualTo(TestBook.Title));
-            Assert.That(result.Authors, Is.Not.Null);
-            Assert.That(result.Authors, Has.Count.EqualTo(1));
-            Assert.That(result.Authors.First().FirstName, Is.EqualTo(TestBook.Authors.First().FirstName));
-            Assert.That(result.Authors.First().LastName, Is.EqualTo(TestBook.Authors.First().LastName));
-            Assert.That(result.Genres, Is.Not.Null);
-            Assert.That(result.Genres, Has.Count.EqualTo(1));
-            Assert.That(result.Genres.First().Name, Is.EqualTo(TestBook.Genres.First().Name));
-            Assert.That(result.Isbn, Is.EqualTo(TestBook.Isbn));
-            Assert.That(result.PublicationYear, Is.EqualTo(TestBook.PublicationYear));
-        });
-    }
-
-    [Test]
-    public void ConvertToBook_ReturnsBook()
-    {
-        // Arrange
-        _mockAuthorService.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(TestBook.Authors.First());
-        _mockGenreService.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(TestBook.Genres.First());
-        var bookService =
-            new BookService(_mockBookRepository.Object, _mockGenreService.Object, _mockAuthorService.Object);
-
-        // Act
-        var result = bookService.MapToEntity(Books.First());
-        Assert.Multiple(() =>
-        {
-            // Assert
-            Assert.That(result.Title, Is.EqualTo(Books.First().Title));
-            Assert.That(result.Authors, Is.Not.Null);
-        });
-        Assert.That(result.Authors, Has.Count.EqualTo(1));
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Authors.First().FirstName, Is.EqualTo(Books.First().Authors.First().FirstName));
-            Assert.That(result.Authors.First().LastName, Is.EqualTo(Books.First().Authors.First().LastName));
-            Assert.That(result.Genres, Is.Not.Null);
-        });
-        Assert.That(result.Genres, Has.Count.EqualTo(1));
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Genres.First().Name, Is.EqualTo(Books.First().Genres.First().Name));
-            Assert.That(result.Isbn, Is.EqualTo(Books.First().Isbn));
-            Assert.That(result.PublicationYear, Is.EqualTo(Books.First().PublicationYear));
-        });
     }
 }

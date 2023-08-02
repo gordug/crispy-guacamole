@@ -4,48 +4,48 @@ using BookLibrary.DAL.Repositories;
 
 namespace BookLibrary.BLL.Services;
 
-public abstract class LibraryService<T, U> : ILibraryService<T> where T : class where U : class, IEntity
+public abstract class LibraryService<TModel, TEntity> : ILibraryService<TModel> where TModel : class where TEntity : class, IEntity
 {
-    internal readonly IRepository<U> _repository;
+    internal readonly IRepository<TEntity> Repository;
+    internal readonly IMapper<TModel, TEntity> Mapper;
 
-    protected LibraryService(IRepository<U> repository)
+    protected LibraryService(IRepository<TEntity> repository,
+                             IMapper<TModel, TEntity> mapper)
     {
-        _repository = repository;
+        Repository = repository;
+        Mapper = mapper;
     }
 
-    public async Task<IEnumerable<T?>?> GetAllAsync()
+    public async Task<IEnumerable<TModel?>?> GetAllAsync()
     {
-        return MapToModel(await _repository.GetAllAsync());
+        return Mapper.MapToModel(await Repository.GetAllAsync());
     }
 
-    public async Task<T?> GetAsync(int id)
+    public async Task<TModel?> GetAsync(int id)
     {
-        return MapToModel(await _repository.GetAsync(id));
+        return Mapper.MapToModel(await Repository.GetAsync(id));
     }
 
-    public async Task<T?> AddAsync(T entity)
+    public async Task<TModel?> AddAsync(TModel model)
     {
-        return MapToModel(await _repository.AddAsync(MapToEntity(entity)));
+        return Mapper.MapToModel(await Repository.AddAsync(Mapper.MapToEntity(model)));
     }
 
-    public async Task<T?> UpdateAsync(T entity)
+    public async Task<TModel?> UpdateAsync(TModel model)
     {
-        return MapToModel(await _repository.UpdateAsync(MapToEntity(entity)));
+        var entityToUpdate = Mapper.MapToEntity(model);
+        return entityToUpdate is null ? null : Mapper.MapToModel(await Repository.UpdateAsync(entityToUpdate));
     }
 
     public Task DeleteAsync(int id)
     {
-        return _repository.DeleteAsync(id);
+        return Repository.DeleteAsync(id);
     }
 
-    internal abstract T? MapToModel(U? entity);
-    internal abstract U? MapToEntity(T? entity);
-    internal abstract IEnumerable<T?>? MapToModel(IEnumerable<U?>? entities);
-    internal abstract IEnumerable<U?>? MapToEntity(IEnumerable<T?>? entities);
-
+    
     public void Dispose()
     {
-        _repository.Dispose();
+        Repository.Dispose();
     }
 
     ~LibraryService()

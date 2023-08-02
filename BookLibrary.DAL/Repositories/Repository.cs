@@ -4,61 +4,62 @@ namespace BookLibrary.DAL.Repositories;
 
 internal abstract class Repository<T> : IRepository<T> where T : class, IEntity
 {
-    private readonly LibraryContext _context;
+    internal readonly LibraryContext Context;
 
     protected Repository(LibraryContext context)
-        => _context = context;
+        => Context = context;
 
-    public async Task<IEnumerable<T?>> GetAllAsync()
+    public virtual Task<IEnumerable<T?>> GetAllAsync()
     {
-        return _context.Set<T>();
+        return Task.FromResult<IEnumerable<T?>>(Context.Set<T>());
     }
 
-    public async ValueTask<T?> GetAsync(int id)
+    public virtual async ValueTask<T?> GetAsync(int id)
     {
-        return await _context.FindAsync<T>(id);
+        return await Context.FindAsync<T>(id);
     }
 
-    public async Task<T?> AddAsync(T? entity)
+    public virtual async Task<T?> AddAsync(T? entity)
     {
         if (entity is null)
         {
             throw new ArgumentNullException(nameof(entity));
         }
 
-        await _context.Set<T>().AddAsync(entity);
-        await _context.SaveChangesAsync();
+        await Context.Set<T>().AddAsync(entity);
+        await Context.SaveChangesAsync();
         return entity;
     }
 
-    public async Task<T?> UpdateAsync(T entity)
+    public virtual async Task<T?> UpdateAsync(T entity)
     {
-        var entityToUpdate = await _context.FindAsync<T>(entity.ID).ConfigureAwait(false);
+        var entityToUpdate = await Context.FindAsync<T>(entity.ID).ConfigureAwait(false);
         if (entityToUpdate is null)
         {
             return entityToUpdate;
         }
 
-        _context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-        await _context.SaveChangesAsync();
+        Context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
+        await Context.SaveChangesAsync();
         return entity;
     }
 
-    public async Task<T?> DeleteAsync(int id)
+    public virtual async Task<T?> DeleteAsync(int id)
     {
-        var entity = await _context.FindAsync<T>(id).ConfigureAwait(false);
+        var entity = await Context.FindAsync<T>(id).ConfigureAwait(false);
         if (entity is null)
         {
             return entity;
         }
-        entity = _context.Set<T>().Remove(entity).Entity;
-        await _context.SaveChangesAsync();
+
+        entity = Context.Set<T>().Remove(entity).Entity;
+        await Context.SaveChangesAsync();
         return entity;
     }
 
     public void Dispose()
     {
-        _context.Dispose();
+        Context.Dispose();
     }
 
     ~Repository()

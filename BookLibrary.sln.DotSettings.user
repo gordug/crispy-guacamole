@@ -1,12 +1,9 @@
 ﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=9cab6f69_002Dd171_002D4b29_002D8c26_002Dcb1539ead2bf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from AuthorRepositoryTests.cs" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;Or&gt;&#xD;
-    &lt;ProjectFile&gt;D3F315A1-6E11-4341-87ED-F75FB7E04D42/f:AuthorRepositoryTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;Project Location="C:\Users\chjoh1\RiderProjects\crispy-guacamole\BookLibrary.BLL.Tests" Presentation="&amp;lt;BookLibrary.BLL.Tests&amp;gt;" /&gt;&#xD;
     &lt;ProjectFile&gt;D3F315A1-6E11-4341-87ED-F75FB7E04D42/f:BookRepositoryTests.cs&lt;/ProjectFile&gt;&#xD;
-    &lt;TestAncestor&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::D3F315A1-6E11-4341-87ED-F75FB7E04D42::net7.0::BookLibrary.DAL.Tests.GenreRepositoryTests&lt;/TestId&gt;&#xD;
-      &lt;TestId&gt;NUnit3x::4FCD6EC7-BBAD-482D-88A3-098AB81C777B::net7.0::BookLibrary.BLL.Tests.GenreServiceTests&lt;/TestId&gt;&#xD;
-    &lt;/TestAncestor&gt;&#xD;
-    &lt;ProjectFile&gt;4FCD6EC7-BBAD-482D-88A3-098AB81C777B/f:BookServiceTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;ProjectFile&gt;D3F315A1-6E11-4341-87ED-F75FB7E04D42/f:GenreRepositoryTests.cs&lt;/ProjectFile&gt;&#xD;
+    &lt;Project Location="C:\Users\chjoh1\RiderProjects\crispy-guacamole\BookLibrary.DAL.Tests" Presentation="&amp;lt;BookLibrary.DAL.Tests&amp;gt;" /&gt;&#xD;
   &lt;/Or&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

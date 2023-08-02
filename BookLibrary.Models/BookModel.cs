@@ -12,7 +12,7 @@ public class BookModel
         PublicationYear = publicationYear;
     }
 
-    public BookModel(int id, string title, List<AuthorModel> authors, List<GenreModel> genres, string isbn,
+    public BookModel(int id, string title, List<AuthorModel?>? authors, List<GenreModel?>? genres, string isbn,
         int publicationYear)
     {
         Id = id;

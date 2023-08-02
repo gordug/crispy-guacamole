@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class DLLServices
+public static class DALServices
 {
     public static void AddContext(this IServiceCollection services, IConfiguration configuration)
     {

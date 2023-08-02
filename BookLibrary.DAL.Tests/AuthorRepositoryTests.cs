@@ -35,7 +35,7 @@ public class AuthorRepositoryTests
     private async Task SetupMockData()
     {
         var author = await _repository.GetAsync(_testAuthor.ID);
-        if (author is not null) return;
+        if (author is { }) return;
         await _repository.AddAsync(_testAuthor);
     }
 

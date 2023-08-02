@@ -5,15 +5,31 @@ namespace BookLibrary.DAL.Entities;
 
 public class Book : IValidatableObject, IEntity
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+    public Book(
+        string title,
+        List<Author?>? authors,
+        List<Genre?>? genres,
+        string isbn,
+        int publicationYear)
+    {
+        Title = title;
+        Authors = authors;
+        Genres = genres;
+        Isbn = isbn;
+        PublicationYear = publicationYear;
+    }
+    
+    public Book() { }
+
+    [Key,DatabaseGenerated(DatabaseGeneratedOption.Identity), Column("BookId")]
     public int ID { get; init; }
 
-    [Required] [MaxLength(200)] public string Title { get; set; } = string.Empty;
-    public ICollection<Author> Authors { get; set; } = default!;
-    public ICollection<Genre> Genres { get; set; } = default!;
-    [Required] [MaxLength(13)] public string Isbn { get; init; } = string.Empty;
-    [Required] [Range(1000, 9999)] public int PublicationYear { get; init; }
+    [Required,MaxLength(50), MinLength(1)]  public string Title { get; set; } = string.Empty;
+    public List<Author?>? Authors { get; set; }
+    [Required, MaxLength(50), MinLength(1)]
+    public List<Genre?>? Genres { get; set; }
+    [Required,MaxLength(13)]  public string Isbn { get; init; } = string.Empty;
+    [Required,Range(1000, 9999)]  public int PublicationYear { get; init; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
@@ -23,18 +39,5 @@ public class Book : IValidatableObject, IEntity
 
         if (Isbn.Length != 13)
             yield return new ValidationResult("ISBN must be 13 characters long", new[] { nameof(Isbn) });
-    }
-
-    public object Clone()
-    {
-        return new Book
-        {
-            ID = ID,
-            Title = Title,
-            Authors = Authors,
-            Genres = Genres,
-            Isbn = Isbn,
-            PublicationYear = PublicationYear
-        };
     }
 }

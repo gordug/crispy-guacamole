@@ -3,7 +3,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
-builder.Services.AddBLLService();
+builder.Services.AddBllService();
 builder.Services.AddContext(builder.Configuration);
 var app = builder.Build();
 

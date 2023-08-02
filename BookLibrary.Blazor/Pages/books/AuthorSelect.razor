@@ -1,0 +1,44 @@
+﻿@using System.ComponentModel.DataAnnotations
+@if (!AvailableAuthors.Any())
+    {
+        <p><em>No Authors Available </em></p>
+    }
+else
+{
+    <select id="@id" class="@Class" multiple @onchange="UpdateSelectedAuthors">
+        @foreach (var author in @AvailableAuthors)
+        {
+            <option value="@author.Id">@author.LastName, @author.FirstName </option>
+        }
+    </select>
+}
+
+@code {
+    [Parameter]
+    public string id { get; set; }
+    
+    [Parameter]
+    public string Class { get; set; }
+    
+    [Parameter]
+    public List<int>? SelectedAuthorIds { get; set; }
+    
+    [Parameter, Required]
+    public IEnumerable<AuthorModel> AvailableAuthors { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedAuthorIds ??= new List<int>();
+        base.OnInitialized();
+    }
+
+    [Parameter]
+    public EventCallback<List<int>> SelectedAuthorIdsChanged { get; set; }
+
+    private async Task UpdateSelectedAuthors(ChangeEventArgs e)
+    {
+        var selectedOptions = e.Value as IEnumerable<string>;
+        SelectedAuthorIds = selectedOptions?.Select(int.Parse).ToList();
+        await SelectedAuthorIdsChanged.InvokeAsync(SelectedAuthorIds);
+    }
+}

@@ -1,4 +1,5 @@
-﻿using BookLibrary.BLL.Services;
+﻿using BookLibrary.BLL.Interfaces;
+using BookLibrary.BLL.Services;
 using BookLibrary.DAL.Entities;
 using BookLibrary.DAL.Repositories;
 using BookLibrary.Models;
@@ -9,9 +10,14 @@ namespace BookLibrary.BLL.Tests;
 internal class AuthorServiceTests
 {
     private readonly Mock<IRepository<Author>> _authorRepositoryMock;
+    private readonly Mock<IMapper<AuthorModel, Author>> _authorMapperMock;
 
     public AuthorServiceTests()
-        => _authorRepositoryMock = new Mock<IRepository<Author>>();
+    {
+        var mockMappers = new MockMappers.MockMappers();
+        _authorMapperMock = mockMappers.GetAuthorMapper();
+        _authorRepositoryMock = new Mock<IRepository<Author>>();
+    }
 
     [SetUp]
     public void Setup()
@@ -31,14 +37,13 @@ internal class AuthorServiceTests
             .ReturnsAsync((Author author) => author);
         _authorRepositoryMock.Setup(x => x.DeleteAsync(It.IsAny<int>()))
             .ReturnsAsync((int id) => new Author { ID = id });
-
     }
 
     [Test]
     public async Task GetAllAsyncTest()
     {
         // Arrange
-        var service = new AuthorService(_authorRepositoryMock.Object);
+        var service = new AuthorService(_authorRepositoryMock.Object, _authorMapperMock.Object);
 
         // Act
         var authors = (await service.GetAllAsync() ?? Array.Empty<AuthorModel>()).ToArray();
@@ -65,7 +70,7 @@ internal class AuthorServiceTests
     public async Task GetAsyncTest()
     {
         // Arrange
-        var service = new AuthorService(_authorRepositoryMock.Object);
+        var service = new AuthorService(_authorRepositoryMock.Object, _authorMapperMock.Object);
 
         // Act
         var author = await service.GetAsync(1);
@@ -84,7 +89,7 @@ internal class AuthorServiceTests
     public async Task AddAsyncTest()
     {
         // Arrange
-        var service = new AuthorService(_authorRepositoryMock.Object);
+        var service = new AuthorService(_authorRepositoryMock.Object, _authorMapperMock.Object);
 
         // Act
         var author = await service.AddAsync(new AuthorModel ("FirstName4", "LastName4" ));
@@ -103,7 +108,7 @@ internal class AuthorServiceTests
     public async Task UpdateAsyncTest()
     {
         // Arrange
-        var service = new AuthorService(_authorRepositoryMock.Object);
+        var service = new AuthorService(_authorRepositoryMock.Object, _authorMapperMock.Object);
         _authorRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Author>()))
                              .ReturnsAsync((Author _) => new Author{ID = 4, FirstName = "FirstName4", LastName = "LastName4"});
 
@@ -124,7 +129,7 @@ internal class AuthorServiceTests
     public async Task DeleteAsyncTest()
     {
         // Arrange
-        var service = new AuthorService(_authorRepositoryMock.Object);
+        var service = new AuthorService(_authorRepositoryMock.Object, _authorMapperMock.Object);
 
         // Act
         await service.DeleteAsync(1);

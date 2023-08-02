@@ -1,4 +1,5 @@
-﻿using BookLibrary.BLL.Services;
+﻿using BookLibrary.BLL.Interfaces;
+using BookLibrary.BLL.Services;
 using BookLibrary.DAL.Entities;
 using BookLibrary.DAL.Repositories;
 using BookLibrary.Models;
@@ -9,10 +10,13 @@ namespace BookLibrary.BLL.Tests;
 public class GenreServiceTests
 {
     private readonly Mock<IRepository<Genre>> _genreRepositoryMock;
+    private readonly Mock<IMapper<GenreModel, Genre>> _mapperMock;
 
     public GenreServiceTests()
     {
+        var mockMappers = new MockMappers.MockMappers();
         _genreRepositoryMock = new Mock<IRepository<Genre>>();
+        _mapperMock = mockMappers.GetGenreMapper();
     }
 
     [SetUp]
@@ -39,7 +43,7 @@ public class GenreServiceTests
 
         _genreRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(genres);
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
 
         // Act
         var result = (await genreService.GetAllAsync() ?? Array.Empty<GenreModel?>()).ToArray();
@@ -64,8 +68,7 @@ public class GenreServiceTests
         // Arrange
         _genreRepositoryMock.Setup(x => x.GetAllAsync()).ReturnsAsync(Array.Empty<Genre>());
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
         // Act
         var result = (await genreService.GetAllAsync() ?? Array.Empty<GenreModel?>()).ToArray();
 
@@ -82,8 +85,7 @@ public class GenreServiceTests
 
         _genreRepositoryMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(genre);
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
         // Act
         var result = await genreService.GetAsync(1);
 
@@ -102,8 +104,7 @@ public class GenreServiceTests
         // Arrange
         _genreRepositoryMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync((Genre?)null);
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
         // Act
         var result = await genreService.GetAsync(1);
 
@@ -119,8 +120,7 @@ public class GenreServiceTests
 
         _genreRepositoryMock.Setup(x => x.AddAsync(It.IsAny<Genre>())).ReturnsAsync(genre);
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
         // Act
         var result = await genreService.AddAsync(new GenreModel("Genre 1"));
 
@@ -141,8 +141,7 @@ public class GenreServiceTests
 
         _genreRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Genre>())).ReturnsAsync(genre);
 
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
         // Act
         var result = await genreService.UpdateAsync(new GenreModel("Genre 1"));
 
@@ -162,8 +161,7 @@ public class GenreServiceTests
         const int genreId = 1;
         _genreRepositoryMock.Setup(s => s.GetAsync(genreId)).ReturnsAsync(() => GetGenres().First());
         _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => Task.FromResult(GetGenres().First()));
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
 
         // Act
         await genreService.DeleteAsync(1);
@@ -179,75 +177,12 @@ public class GenreServiceTests
         const int genreId = 1;
         _genreRepositoryMock.Setup(s => s.GetAsync(genreId)).ReturnsAsync(() => GetGenres().First());
         _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => Task.FromResult(GetGenres().First()));
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
+        var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
 
         // Act
         await genreService.DeleteAsync(1);
 
         // Assert
         _genreRepositoryMock.Verify(x => x.DeleteAsync(genreId), Times.Once);
-    }
-
-    [Test]
-    public void MapToModel_ReturnsCorrectModel()
-    {
-        // Arrange
-        var genre = new Genre { ID = 1, Name = "Genre 1" };
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
-        // Act
-        var result = genreService.MapToModel(genre);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result?.Id, Is.EqualTo(1));
-            Assert.That(result?.Name, Is.EqualTo("Genre 1"));
-        });
-    }
-
-    [Test]
-    public void MapToModel_ReturnsNull_WhenGenreIsNull()
-    {
-        // Arrange
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
-        // Act
-        var result = genreService.MapToModel((Genre)null);
-
-        // Assert
-        Assert.That(result, Is.Null);
-    }
-
-    [Test]
-    public void MapToEntity_ReturnsCorrectEntity()
-    {
-        // Arrange
-        var genre = new GenreModel("Genre 1");
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
-        // Act
-        var result = genreService.MapToEntity(genre);
-
-        // Assert
-        Assert.Multiple(() =>
-        {
-            Assert.That(result?.ID, Is.EqualTo(0));
-            Assert.That(result?.Name, Is.EqualTo("Genre 1"));
-        });
-    }
-
-    [Test]
-    public void MapToEntity_ReturnsNull_WhenGenreIsNull()
-    {
-        // Arrange
-        var genreService = new GenreService(_genreRepositoryMock.Object);
-
-        // Act
-        var result = genreService.MapToEntity((GenreModel)null);
-
-        // Assert
-        Assert.That(result, Is.Null);
     }
 }
