@@ -29,9 +29,21 @@ public class GenreServiceTests
     {
         return new List<Genre>
         {
-            new() { ID = 1, Name = "Genre 1" },
-            new() { ID = 2, Name = "Genre 2" },
-            new() { ID = 3, Name = "Genre 3" }
+            new()
+            {
+                ID = 1,
+                Name = "Genre 1"
+            },
+            new()
+            {
+                ID = 2,
+                Name = "Genre 2"
+            },
+            new()
+            {
+                ID = 3,
+                Name = "Genre 3"
+            }
         };
     }
 
@@ -81,7 +93,11 @@ public class GenreServiceTests
     public async Task GetAsync_ReturnsGenre_WhenGenreExists()
     {
         // Arrange
-        var genre = new Genre { ID = 1, Name = "Genre 1" };
+        var genre = new Genre
+        {
+            ID = 1,
+            Name = "Genre 1"
+        };
 
         _genreRepositoryMock.Setup(x => x.GetAsync(It.IsAny<int>())).ReturnsAsync(genre);
 
@@ -116,7 +132,11 @@ public class GenreServiceTests
     public async Task CreateAsync_ReturnsCreatedGenre()
     {
         // Arrange
-        var genre = new Genre { ID = 1, Name = "Genre 1" };
+        var genre = new Genre
+        {
+            ID = 1,
+            Name = "Genre 1"
+        };
 
         _genreRepositoryMock.Setup(x => x.AddAsync(It.IsAny<Genre>())).ReturnsAsync(genre);
 
@@ -137,7 +157,11 @@ public class GenreServiceTests
     public async Task UpdateAsync_ReturnsUpdatedGenre()
     {
         // Arrange
-        var genre = new Genre { ID = 1, Name = "Genre 1" };
+        var genre = new Genre
+        {
+            ID = 1,
+            Name = "Genre 1"
+        };
 
         _genreRepositoryMock.Setup(x => x.UpdateAsync(It.IsAny<Genre>())).ReturnsAsync(genre);
 
@@ -160,7 +184,7 @@ public class GenreServiceTests
         // Arrange
         const int genreId = 1;
         _genreRepositoryMock.Setup(s => s.GetAsync(genreId)).ReturnsAsync(() => GetGenres().First());
-        _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => Task.FromResult(GetGenres().First()));
+        _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => ValueTask.FromResult(GetGenres().First()));
         var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
 
         // Act
@@ -176,7 +200,7 @@ public class GenreServiceTests
         // Arrange
         const int genreId = 1;
         _genreRepositoryMock.Setup(s => s.GetAsync(genreId)).ReturnsAsync(() => GetGenres().First());
-        _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => Task.FromResult(GetGenres().First()));
+        _genreRepositoryMock.Setup(s => s.DeleteAsync(genreId)).Returns(() => ValueTask.FromResult(GetGenres().First()));
         var genreService = new GenreService(_genreRepositoryMock.Object, _mapperMock.Object);
 
         // Act

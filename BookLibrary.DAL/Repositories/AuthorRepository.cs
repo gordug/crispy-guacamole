@@ -8,5 +8,8 @@ namespace BookLibrary.DAL.Repositories;
 
 internal class AuthorRepository : Repository<Author>
 {
-    public AuthorRepository(LibraryContext context) : base(context) { }
+    public AuthorRepository(LibraryContext context)
+        : base(context)
+    {
+    }
 }

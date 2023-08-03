@@ -4,9 +4,10 @@ using BookLibrary.DAL.Entities;
 using BookLibrary.Models;
 
 [assembly: InternalsVisibleTo("BookLibrary.BLL.Tests")]
+
 namespace Microsoft.Extensions.DependencyInjection.Mappers;
 
-internal class GenreMapper : IMapper<GenreModel, Genre> 
+internal class GenreMapper : IMapper<GenreModel, Genre>
 {
     public GenreModel? MapToModel(Genre? genre)
     {

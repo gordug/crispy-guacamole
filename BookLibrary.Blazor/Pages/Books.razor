@@ -1,55 +1,79 @@
 ﻿@page "/books"
-@using BookLibrary.DAL.Entities
+<Title>Book Library - Books</Title>
 
-@inject IBookService BookService
 @inject ILibraryService<BookModel> LibraryService
 @inject NavigationManager NavigationManager
-<h3>Books</h3>
-@if (_books is not {Count: > 0})
-{
-    <p><em>Loading ....</em></p>
-}
-else
-{
-    <div class="table">
-        <div class="row col-3">
-            <button class="btn btn-success" @onclick="AddBook">Add Book</button>
-            </div>
+<div class="display-2">Books</div>
+
+<div class="table">
+    <div class="row-3 row-sm">
+        <button class="btn btn-success" @onclick="AddBook">Add Book</button>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h4>Title</h4>
+        </div>
+        <div class="col-4">
+            <h4>Authors</h4>
+        </div>
+        <div class="col">
+            <h4>Actions</h4>
+        </div>
+    </div>
+    @if (_books is not {Count: > 0})
+    {
+        <div class="spinner-border" role="status">
+        </div>
+        <span class="sr-only">Loading...</span>
+    }
+    else
+    {
         @foreach (var book in _books)
         {
             <div class="row">
-                @if (book == null){ continue; }
-                <div class="col col-8">
-                    <h4>@book.Title</h4>
-                    @if (book.Authors is not {Count: >0 })
+                @if (book == null)
+                {
+                    continue;
+                }
+                <div class="col-3">
+                    <h5>@book.Title</h5>
+                </div>
+                <div class="col-4">
+                    @if (book.Authors is not {Count: > 0 })
                     {
-                        <p><em>No authors</em></p>
+                        <p>
+                            <em>No authors</em>
+                        </p>
                     }
                     else
                     {
                         @foreach (var author in book.Authors)
                         {
                             <p>@author.FirstName, @author.LastName </p>
-                            <br/>
                         }
                     }
                 </div>
-                <div class="col-1">
-                    <button class="btn btn-outline-primary" @onclick="() => EditBook(book)">Edit</button>
-                </div>
-                <div class="col-1">
+                <div class="col">
+                    <button class="btn btn-outline-info" @onclick="() => EditBook(book)">Edit</button>
                     <button class="btn btn-outline-danger" @onclick="() => DeleteBook(book)">Delete</button>
                 </div>
             </div>
         }
-    </div>
-}
+    }
+</div>
+
 @code {
     private ObservableCollection<BookModel?>? _books;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        _books = new ObservableCollection<BookModel?>(await LibraryService.GetAllAsync() ?? null!);
+        if (!firstRender)
+        {
+            return;
+        }
+        _books = new ObservableCollection<BookModel?>(LibraryService.GetAllAsync().Result ?? null!);
+        StateHasChanged();
+        base.OnAfterRender(firstRender);
     }
 
     private void AddBook()
@@ -67,4 +91,5 @@ else
         await LibraryService.DeleteAsync(book.Id);
         _books?.Remove(book);
     }
+
 }

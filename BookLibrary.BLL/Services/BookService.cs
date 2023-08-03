@@ -10,10 +10,12 @@ namespace BookLibrary.BLL.Services;
 
 internal sealed class BookService : LibraryService<BookModel, Book>, IBookService
 {
-    public BookService(IRepository<Book> bookRepository, IMapper<BookModel, Book> mapper) : base(bookRepository, mapper)
+    public BookService(
+        IRepository<Book> bookRepository,
+        IMapper<BookModel, Book> mapper)
+        : base(bookRepository, mapper)
     {
     }
-
 
     public async Task<IEnumerable<BookModel?>?> SearchAsync(string query)
     {
@@ -46,6 +48,4 @@ internal sealed class BookService : LibraryService<BookModel, Book>, IBookServic
         var books = Repository.GetAllAsync().Result;
         return Task.FromResult(Mapper.MapToModel(books.Where(book => book is { } && book.PublicationYear == year)));
     }
-
-    
 }

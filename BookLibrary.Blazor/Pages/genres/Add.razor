@@ -1,0 +1,51 @@
+﻿@page "/genres/add"
+@inject ILibraryService<GenreModel> GenreService
+@inject NavigationManager NavigationManager 
+<div class="display-2">Add Genre</div>
+@if (Genre is null)
+{
+    <div class="spinner-border" role="status">
+    </div>
+    <span class="sr-only">Loading...</span>
+}
+else
+{
+    <EditForm Model="Genre" OnValidSubmit="AddGenre">
+        <div class="table">
+            <div class="row">
+                <div class="col-3">
+                    <label for="genre" class="form-label">Genre</label>
+                </div>
+                <div class="col-9">
+                    <InputText @bind-Value="Genre.Name" id="genre" class="form-text"/>
+                    <ValidationMessage For="@(() => Genre.Name)"/>
+                </div>
+            </div>
+            <div class="col-3">
+                <button class="btn btn-success" type="submit">Add Genre</button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+    private GenreModel? Genre { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Genre = new GenreModel();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private Task AddGenre()
+    {
+        GenreService.AddAsync(Genre);
+        NavigationManager.NavigateTo("/genres");
+        return Task.CompletedTask;
+    }
+
+}

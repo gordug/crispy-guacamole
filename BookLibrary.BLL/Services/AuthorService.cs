@@ -10,7 +10,10 @@ namespace BookLibrary.BLL.Services;
 
 internal sealed class AuthorService : LibraryService<AuthorModel, Author>, IAuthorService
 {
-    public AuthorService(IRepository<Author> authorRepository, IMapper<AuthorModel, Author> mapper) : base(authorRepository, mapper)
+    public AuthorService(
+        IRepository<Author> authorRepository,
+        IMapper<AuthorModel, Author> mapper)
+        : base(authorRepository, mapper)
     {
     }
 
@@ -18,8 +21,6 @@ internal sealed class AuthorService : LibraryService<AuthorModel, Author>, IAuth
     {
         var authors = await Repository.GetAllAsync();
         return Mapper.MapToModel(authors.Where(author =>
-            author is { } && (author.FirstName.Contains(query) || author.LastName.Contains(query))));
+                                                   author is { } && (author.FirstName.Contains(query) || author.LastName.Contains(query))));
     }
-
-    
 }

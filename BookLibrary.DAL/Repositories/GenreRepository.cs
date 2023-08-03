@@ -8,5 +8,8 @@ namespace BookLibrary.DAL.Repositories;
 
 internal class GenreRepository : Repository<Genre>
 {
-    public GenreRepository(LibraryContext context) : base(context) { }
+    public GenreRepository(LibraryContext context)
+        : base(context)
+    {
+    }
 }

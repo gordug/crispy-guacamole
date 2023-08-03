@@ -19,36 +19,41 @@ public class BookServiceTests
         _mockBookMapper = mockMappers.GetBookMapper();
     }
 
-    private List<AuthorModel> Authors =>
-        new() { new AuthorModel("Test", "Author") };
+    private List<AuthorModel> Authors => new() {new AuthorModel("Test", "Author")};
 
-    private List<GenreModel> Genres =>
-        new() { new GenreModel("Test Genre") };
+    private List<GenreModel> Genres => new() {new GenreModel("Test Genre")};
 
-    private IEnumerable<BookModel> Books =>
-        new List<BookModel>
-        {
-            new(
-                "Test Book",
-                Authors,
-                Genres,
-                "1234567890123",
-                2021
-            )
-        };
+    private IEnumerable<BookModel> Books => new List<BookModel>
+    {
+        new(
+            "Test Book",
+            Authors,
+            Genres,
+            "1234567890123",
+            2021
+           )
+    };
 
-    private Book TestBook =>
-        new()
-        {
-            ID = 1,
-            Title = "Test Book",
-            Authors = Authors.Select(x => new Author { ID = 1, FirstName = x.FirstName, LastName = x.LastName })
-                .ToList(),
-            Genres = Genres.Select(x => new Genre { ID = 1, Name = x.Name }).ToList(),
-            Isbn = "1234567890123",
-            PublicationYear = 2021
-        };
-
+    private Book TestBook => new()
+    {
+        ID = 1,
+        Title = "Test Book",
+        Authors = Authors.Select(x => new Author
+                         {
+                             ID = 1,
+                             FirstName = x.FirstName,
+                             LastName = x.LastName
+                         })
+                         .ToList(),
+        Genres = Genres.Select(x => new Genre
+                       {
+                           ID = 1,
+                           Name = x.Name
+                       })
+                       .ToList(),
+        Isbn = "1234567890123",
+        PublicationYear = 2021
+    };
 
     [SetUp]
     public void Setup()
@@ -121,7 +126,7 @@ public class BookServiceTests
         const int bookId = 1;
         var book = Books.First();
         _mockBookRepository.Setup(x => x.GetAsync(bookId)).ReturnsAsync(TestBook);
-        _mockBookRepository.Setup(x => x.UpdateAsync(TestBook)).Returns(() => Task.FromResult(TestBook));
+        _mockBookRepository.Setup(x => x.UpdateAsync(TestBook)).Returns(() => ValueTask.FromResult(TestBook));
 
         var bookService =
             new BookService(_mockBookRepository.Object, _mockBookMapper.Object);
@@ -140,7 +145,7 @@ public class BookServiceTests
         const int bookId = 1;
         var book = Books.First();
         _mockBookRepository.Setup(x => x.GetAsync(bookId)).ReturnsAsync(TestBook);
-        _mockBookRepository.Setup(x => x.DeleteAsync(bookId)).Returns(() => Task.FromResult(TestBook));
+        _mockBookRepository.Setup(x => x.DeleteAsync(bookId)).Returns(() => ValueTask.FromResult(TestBook));
 
         var bookService =
             new BookService(_mockBookRepository.Object, _mockBookMapper.Object);

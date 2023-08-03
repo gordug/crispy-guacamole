@@ -8,10 +8,16 @@ public class GenreModel
         Name = name;
     }
 
-    public GenreModel(int id, string name)
+    public GenreModel(
+        int id,
+        string name)
     {
         Id = id;
         Name = name;
+    }
+
+    public GenreModel()
+    {
     }
 
     public int Id { get; set; }

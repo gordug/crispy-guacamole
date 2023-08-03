@@ -4,13 +4,15 @@ using BookLibrary.DAL.Repositories;
 
 namespace BookLibrary.BLL.Services;
 
-public abstract class LibraryService<TModel, TEntity> : ILibraryService<TModel> where TModel : class where TEntity : class, IEntity
+public abstract class LibraryService<TModel, TEntity> : ILibraryService<TModel> where TModel : class
+                                                                                where TEntity : class, IEntity
 {
     internal readonly IRepository<TEntity> Repository;
     internal readonly IMapper<TModel, TEntity> Mapper;
 
-    protected LibraryService(IRepository<TEntity> repository,
-                             IMapper<TModel, TEntity> mapper)
+    protected LibraryService(
+        IRepository<TEntity> repository,
+        IMapper<TModel, TEntity> mapper)
     {
         Repository = repository;
         Mapper = mapper;
@@ -37,12 +39,11 @@ public abstract class LibraryService<TModel, TEntity> : ILibraryService<TModel> 
         return entityToUpdate is null ? null : Mapper.MapToModel(await Repository.UpdateAsync(entityToUpdate));
     }
 
-    public Task DeleteAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        return Repository.DeleteAsync(id);
+        await Repository.DeleteAsync(id);
     }
 
-    
     public void Dispose()
     {
         Repository.Dispose();

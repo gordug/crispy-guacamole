@@ -18,8 +18,8 @@ public class GenreRepositoryTests
             Name = "Test Genre"
         };
         var options = new DbContextOptionsBuilder<LibraryContext>()
-            .UseInMemoryDatabase("BookLibrary")
-            .Options;
+                      .UseInMemoryDatabase("BookLibrary")
+                      .Options;
 
         // Instantiate Repository with mocked DbContext
         _repository = new GenreRepository(new LibraryContext(options));
@@ -34,7 +34,11 @@ public class GenreRepositoryTests
     private async Task SetupMockData()
     {
         var genre = await _repository.GetAsync(_testGenre.ID);
-        if (genre is { }) return;
+        if (genre is { })
+        {
+            return;
+        }
+
         await _repository.AddAsync(_testGenre);
     }
 

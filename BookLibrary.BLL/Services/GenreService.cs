@@ -10,7 +10,10 @@ namespace BookLibrary.BLL.Services;
 
 public sealed class GenreService : LibraryService<GenreModel, Genre>, IGenreService
 {
-    public GenreService(IRepository<Genre> genreRepository, IMapper<GenreModel, Genre> mapper) : base(genreRepository, mapper)
+    public GenreService(
+        IRepository<Genre> genreRepository,
+        IMapper<GenreModel, Genre> mapper)
+        : base(genreRepository, mapper)
     {
     }
 

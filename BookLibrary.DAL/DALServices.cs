@@ -10,10 +10,12 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DALServices
 {
-    public static void AddContext(this IServiceCollection services, IConfiguration configuration)
+    public static void AddContext(
+        this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.AddDbContext<LibraryContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("BookLibraryContext")));
+                                                  options.UseSqlServer(configuration.GetConnectionString("BookLibraryContext")));
         services.AddScoped<IRepository<Book>, BookRepository>();
         services.AddScoped<IRepository<Author>, AuthorRepository>();
         services.AddScoped<IRepository<Genre>, GenreRepository>();

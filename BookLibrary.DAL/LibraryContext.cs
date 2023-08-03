@@ -5,22 +5,31 @@ namespace BookLibrary.DAL;
 
 public class LibraryContext : DbContext
 {
-    public LibraryContext(DbContextOptions<LibraryContext> options) : base(options)
+    public LibraryContext(DbContextOptions<LibraryContext> options)
+        : base(options)
     {
     }
 
-    public DbSet<Book?> Books { get; set; } = default!;
-    public DbSet<Author?> Authors { get; set; } = default!;
-    public DbSet<Genre?> Genres { get; set; } = default!;
-    public DbSet<BookGenre> BookGenres { get; set; } = default!;
-    public DbSet<BookAuthor> BookAuthors { get; set; } = default!;
+    public virtual DbSet<Book?> Books { get; set; } = default!;
+    public virtual DbSet<Author?> Authors { get; set; } = default!;
+    public virtual DbSet<Genre?> Genres { get; set; } = default!;
+    public virtual DbSet<BookGenre> BookGenres { get; set; } = default!;
+    public virtual DbSet<BookAuthor> BookAuthors { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BookGenre>()
-            .HasKey(bg => new { bg.BookID, bg.GenreID });
+                    .HasKey(bg => new
+                    {
+                        bg.BookID,
+                        bg.GenreID
+                    });
 
         modelBuilder.Entity<BookAuthor>()
-            .HasKey(ba => new { ba.BookID, ba.AuthorID });
+                    .HasKey(ba => new
+                    {
+                        ba.BookID,
+                        ba.AuthorID
+                    });
     }
 }

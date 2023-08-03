@@ -4,9 +4,9 @@ namespace BookLibrary.DAL.Repositories;
 
 public interface IRepository<T> : IDisposable where T : class, IEntity
 {
-    Task<IEnumerable<T?>> GetAllAsync();
+    ValueTask<IEnumerable<T?>> GetAllAsync();
     ValueTask<T?> GetAsync(int id);
-    Task<T?> AddAsync(T? entity);
-    Task<T?> UpdateAsync(T entity);
-    Task<T?> DeleteAsync(int id);
+    ValueTask<T?> AddAsync(T? entity);
+    ValueTask<T?> UpdateAsync(T? entity);
+    ValueTask<T?> DeleteAsync(int id);
 }

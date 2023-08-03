@@ -1,0 +1,75 @@
+﻿@page "/genres"
+@inject ILibraryService<GenreModel> GenreService
+@inject NavigationManager NavigationManager
+
+<div class="display-2">Genres</div>
+<div class="table">
+    <div class="col-3">
+        <button type="submit" class="btn btn-success">Add Genre</button>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <h4>Genre</h4>
+        </div>
+        <div class="col">
+            <h4>Actions</h4>
+        </div>
+    </div>
+    <div class="row">
+        @if (GenreModels is not {Count: > 0})
+        {
+            <div class="spinner-border" role="status">
+            </div>
+            <span class="sr-only">Loading...</span>
+        }
+        else
+        {
+            @foreach (var genre in GenreModels)
+            {
+                <div class="row">
+                    <div class="col-3">@genre?.Name</div>
+                    <div class="col">
+                        <button class="btn btn-outline-info" @onclick="() => EditGenre(genre)">Edit</button>
+                        <button class="btn btn-outline-danger" @onclick="() => DeleteGenre(genre)">Delete</button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<GenreModel?>? GenreModels { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            GenreModels = GenreService.GetAllAsync().Result?.ToList();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private Task EditGenre(GenreModel? genre)
+    {
+        if (genre is null)
+        {
+            return Task.CompletedTask;
+        }
+        NavigationManager.NavigateTo($"/genres/edit/{genre.Id}");
+        return Task.CompletedTask;
+    }
+
+    private Task DeleteGenre(GenreModel? genre)
+    {
+        if (genre is null)
+        {
+            return Task.CompletedTask;
+        }
+        GenreService.DeleteAsync(genre.Id).Wait();
+        GenreModels?.Remove(genre);
+        return Task.CompletedTask;
+    }
+
+}

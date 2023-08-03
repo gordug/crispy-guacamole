@@ -1,0 +1,47 @@
+﻿@page "/authors/add"
+@inject ILibraryService<AuthorModel> LibraryService
+@inject NavigationManager NavigationManager
+
+<div class="display-2">Add Author</div>
+<EditForm Model="AuthorModel" OnValidSubmit="() => AddAuthor(AuthorModel)">
+    <div class="table">
+        <div class="row">
+            <div class="col-3">
+                <label for="firstname" class="form-label">Firstname</label>
+            </div>
+            <div class="col-9">
+                <InputText id="firstname" @bind-Value="AuthorModel.FirstName" class="form-text"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <label for="surname" class="form-label">Surname</label>
+            </div>
+            <div class="col-9">
+                <InputText id="surname" @bind-Value="AuthorModel.LastName" class="form-text"/>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <button type="submit" class="btn btn-success">Add Author</button>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private AuthorModel AuthorModel { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        AuthorModel = new AuthorModel();
+        await base.OnInitializedAsync();
+    }
+
+    private async Task AddAuthor(AuthorModel authorModel)
+    {
+        await LibraryService.AddAsync(authorModel);
+        NavigationManager.NavigateTo("/author");
+    }
+
+}

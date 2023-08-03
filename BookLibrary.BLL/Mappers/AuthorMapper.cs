@@ -4,8 +4,8 @@ using BookLibrary.DAL.Entities;
 using BookLibrary.Models;
 
 [assembly: InternalsVisibleTo("BookLibrary.BLL.Tests")]
-namespace Microsoft.Extensions.DependencyInjection.Mappers;
 
+namespace Microsoft.Extensions.DependencyInjection.Mappers;
 
 internal class AuthorMapper : IMapper<AuthorModel, Author>
 {
@@ -25,6 +25,7 @@ internal class AuthorMapper : IMapper<AuthorModel, Author>
             null => null,
             _ => new Author
             {
+                ID = author.Id,
                 FirstName = author.FirstName,
                 LastName = author.LastName
             }

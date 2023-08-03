@@ -1,0 +1,118 @@
+﻿@page "/books/edit/{Id:int}"
+
+@inject ILibraryService<BookModel> BookService
+@inject ILibraryService<AuthorModel> AuthorService
+@inject ILibraryService<GenreModel> GenreService
+@inject NavigationManager NavigationManager
+
+<div class="display-2">Update Book</div>
+@if (_book == null)
+{
+    <div class="spinner-border" role="status">
+    </div>
+    <span class="sr-only">Loading...</span>
+}
+<div>
+    <EditForm Model="@_book" OnValidSubmit="@EditBook">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label for="title" class="col-form-label">Title</label>
+            <InputText id="title" class="form-control" @bind-Value="_book.Title"/>
+        </div>
+        <div class="form-group">
+            <label for="authors" class="col-form-label">Authors</label>
+            <AuthorSelect id="authors" class="form-control" ExistingAuthorIds="_selectedAuthorIds" AvailableAuthors="@_availableAuthors" @bind-SelectedAuthorIds="_selectedAuthorIds"/>
+        </div>
+        <div class="form-group">
+            <label for="genres" class="col-form-label">Genres</label>
+            <GenreSelect id="genres" class="form-control" ExistingGenreIds="_selectedGenreIds" AvailableGenres="@_availableGenres" @bind-SelectedGenreIds="_selectedGenreIds"/>
+        </div>
+        <div class="form-group">
+            <label for="isbn" class="col-form-label">ISBN</label>
+            <InputText id="isbn" class="form-control" @bind-Value="_book.Isbn"/>
+        </div>
+        <div class="form-group">
+            <label for="publishedDate" class="col-form-label">Published Year</label>
+            <InputNumber TValue="int" id="publishedDate" class="form-control" @bind-Value="_book.PublicationYear"/>
+        </div>
+        <div class="col-3">
+            <button type="submit" class="btn btn-success">Update Book</button>
+        </div>
+    </EditForm>
+</div>
+
+
+@code {
+    private BookModel? _book = new();
+    private List<int>? _selectedAuthorIds = new();
+    private List<int>? _selectedGenreIds = new();
+    private List<AuthorModel?>? _availableAuthors;
+    private List<GenreModel?>? _availableGenres;
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id <= 0)
+            {
+                NavigationManager.NavigateTo("/books");
+            }
+            _book = await BookService.GetAsync(Id);
+            if (_book == null)
+            {
+                NavigationManager.NavigateTo("/books");
+            }
+            _availableAuthors = (await AuthorService.GetAllAsync())?.ToList() ?? new List<AuthorModel?>();
+            _availableGenres = (await GenreService.GetAllAsync())?.ToList() ?? new List<GenreModel?>();
+            _selectedAuthorIds = _book?.Authors.Select(a => a.Id).ToList();
+            _selectedGenreIds = _book?.Genres.Select(g => g.Id).ToList();
+        }
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task EditBook()
+    {
+        if (_selectedAuthorIds == null || _selectedGenreIds == null)
+        {
+            return;
+        }
+        foreach (var selectedAuthor in _selectedAuthorIds)
+        {
+            if (_selectedAuthorIds.Count == 0)
+            {
+                _book!.Authors = new List<AuthorModel>();
+            }
+            else
+            {
+                var author = await AuthorService.GetAsync(selectedAuthor);
+                if (author != null)
+                    _book!.Authors.Add(author);
+            }
+        }
+        foreach (var selectedGenreId in _selectedGenreIds)
+        {
+            if (_selectedGenreIds.Count == 0)
+            {
+                _book!.Genres = new List<GenreModel>();
+            }
+            else
+            {
+                var genre = await GenreService.GetAsync(selectedGenreId);
+                if (genre != null)
+                    _book!.Genres.Add(genre);
+            }
+        }
+        await BookService.UpdateAsync(_book);
+        NavigationManager.NavigateTo("/books");
+    }
+
+}

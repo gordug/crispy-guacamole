@@ -1,0 +1,82 @@
+﻿@page "/authors"
+@inject ILibraryService<AuthorModel> LibraryService
+@inject NavigationManager NavigationManager
+<Title>Book Library - Authors</Title>
+<div class="display-2">Authors</div>
+<div class="table">
+    <div class="row-3 row-sm">
+        <button class="btn btn-success" type="submit" @onclick="AddAuthor">Add Author</button>
+    </div>
+    <div class="row">
+        <div class="row">
+            <div class="col-3">
+                <h4>FirstName</h4>
+            </div>
+            <div class="col-3">
+                <h4>Surname</h4>
+            </div>
+            <div class="col">
+                <h4>Actions</h4>
+            </div>
+        </div>
+        @if (AuthorModels is not { Count: > 0 })
+        {
+            <div class="spinner-border" role="status">
+            </div>
+            <span class="sr-only">Loading...</span>
+        }
+        else
+        {
+            foreach (var author in AuthorModels)
+            {
+                @if (author is null) continue;
+                <div class="row">
+                    <div class="col-3">
+                        <h5>@author.FirstName</h5>
+                    </div>
+                    <div class="col-3">
+                        <h5>@author.LastName</h5>
+                    </div>
+                    <div class="col">
+                        <button class="btn btn-outline-info" type="submit" @onclick="() => EditAuthor(author)">Edit</button>
+                        <button class="btn btn-outline-danger" type="submit" @onclick="() => DeleteAuthor(author)">Delete</button>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    private List<AuthorModel?>? AuthorModels { get; set; } = new();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            AuthorModels = LibraryService.GetAllAsync().Result?.ToList();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private Task AddAuthor()
+    {
+        NavigationManager.NavigateTo("/authors/add");
+        return Task.CompletedTask;
+    }
+
+    private Task EditAuthor(AuthorModel author)
+    {
+        NavigationManager.NavigateTo($"/authors/edit/{author.Id}");
+        return Task.CompletedTask;
+    }
+
+    private Task DeleteAuthor(AuthorModel author)
+    {
+        LibraryService.DeleteAsync(author.Id);
+        AuthorModels?.Remove(author);
+        return Task.CompletedTask;
+    }
+
+}

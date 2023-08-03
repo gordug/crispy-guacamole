@@ -3,32 +3,45 @@
 <select id="@id" class="@Class" multiple @onchange="UpdateSelectedGenres">
     @if (AvailableGenres is not {} || !AvailableGenres.Any())
     {
-        <option value="" disabled>No genres found</option>        
+        <option value="" disabled>No genres found</option>
     }
     else
     {
         @foreach (var genre in AvailableGenres)
         {
-            <option value="@genre.Id">@genre.Name</option>
+            <option value="@genre.Id" selected="@SelectedGenreIds?.Contains(genre.Id)">@genre.Name</option>
         }
     }
 </select>
 
 @code {
+
     [Parameter]
     public string id { get; set; }
-    
+
     [Parameter]
     public string Class { get; set; }
-    
+
     [Parameter]
     public List<int>? SelectedGenreIds { get; set; }
-    
+
+    [Parameter]
+    public List<int>? ExistingGenreIds { get; set; }
+
     [Parameter, Required]
     public List<GenreModel> AvailableGenres { get; set; }
 
     [Parameter]
     public EventCallback<List<int>> SelectedGenreIdsChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        if (ExistingGenreIds is {Count: > 0})
+        {
+            SelectedGenreIds = ExistingGenreIds;
+        }
+        base.OnInitialized();
+    }
 
     private async Task UpdateSelectedGenres(ChangeEventArgs e)
     {
@@ -36,4 +49,5 @@
         SelectedGenreIds = selectedOptions?.Select(int.Parse).ToList();
         await SelectedGenreIdsChanged.InvokeAsync(SelectedGenreIds);
     }
+
 }

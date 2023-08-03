@@ -1,34 +1,44 @@
 ﻿@using System.ComponentModel.DataAnnotations
 @if (!AvailableAuthors.Any())
-    {
-        <p><em>No Authors Available </em></p>
-    }
+{
+    <p>
+        <em>No Authors Available </em>
+    </p>
+}
 else
 {
     <select id="@id" class="@Class" multiple @onchange="UpdateSelectedAuthors">
         @foreach (var author in @AvailableAuthors)
         {
-            <option value="@author.Id">@author.LastName, @author.FirstName </option>
+            <option value="@author.Id" selected="@SelectedAuthorIds?.Contains(author.Id)">@author.LastName, @author.FirstName </option>
         }
     </select>
 }
 
 @code {
+
     [Parameter]
     public string id { get; set; }
-    
+
     [Parameter]
     public string Class { get; set; }
-    
+
     [Parameter]
     public List<int>? SelectedAuthorIds { get; set; }
-    
+
+    [Parameter]
+    public List<int>? ExistingAuthorIds { get; set; }
+
     [Parameter, Required]
     public IEnumerable<AuthorModel> AvailableAuthors { get; set; }
 
     protected override void OnInitialized()
     {
         SelectedAuthorIds ??= new List<int>();
+        if (ExistingAuthorIds != null)
+        {
+            SelectedAuthorIds.AddRange(ExistingAuthorIds);
+        }
         base.OnInitialized();
     }
 
@@ -41,4 +51,5 @@ else
         SelectedAuthorIds = selectedOptions?.Select(int.Parse).ToList();
         await SelectedAuthorIdsChanged.InvokeAsync(SelectedAuthorIds);
     }
+
 }

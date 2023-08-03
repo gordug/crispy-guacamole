@@ -5,67 +5,103 @@
 @inject ILibraryService<GenreModel> GenreService
 @inject NavigationManager NavigationManager
 
-<h3>Add Book</h3>
+<div class="display-2">Add Book</div>
+@if (_availableAuthors is null || _availableGenres is null)
+{
+    <div class="spinner-border" role="status">
+    </div>
+    <span class="sr-only">Loading...</span>
+}
+else if (!_availableAuthors.Any() || !_availableGenres.Any())
+{
+    <div class="alert alert-danger" role="alert">
+        <h4 class="alert-heading">Error</h4>
+        <p>There are no authors or genres in the database. Please add some before adding a book.</p>
+        <hr>
+        <p class="mb-0">Click <a href="/authors/add">here</a> to add an author.</p>
+        <p class="mb-0">Click <a href="/genres/add">here</a> to add a genre.</p>
+    </div>
+}
 <div>
-    <EditForm Model="@_book" OnValidSubmit="@AddBook">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
+    <EditForm Model="@Book" OnValidSubmit="@AddBook">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
         <div class="form-group">
             <label for="title" class="col-form-label">Title</label>
-            <InputText id="title" class="form-control" @bind-Value="_book.Title" />
+            <InputText id="title" class="form-control" @bind-Value="Book.Title"/>
         </div>
         <div class="form-group">
             <label for="authors" class="col-form-label">Authors</label>
-            <AuthorSelect id="authors" class="form-control" AvailableAuthors="@_availableAuthors" @bind-SelectedAuthorIds="_selectedAuthorIds" />
+            <AuthorSelect id="authors" class="form-control" AvailableAuthors="@_availableAuthors" @bind-SelectedAuthorIds="_selectedAuthorIds"/>
         </div>
         <div class="form-group">
             <label for="genres" class="col-form-label">Genres</label>
-            <GenreSelect id="genres" class="form-control" AvailableGenres="@_availableGenres" @bind-SelectedGenreIds="_selectedGenreIds" />
+            <GenreSelect id="genres" class="form-control" AvailableGenres="@_availableGenres" @bind-SelectedGenreIds="_selectedGenreIds"/>
         </div>
         <div class="form-group">
             <label for="isbn" class="col-form-label">ISBN</label>
-            <InputText id="isbn" class="form-control" @bind-Value="_book.Isbn" />
+            <InputText id="isbn" class="form-control" @bind-Value="Book.Isbn"/>
         </div>
         <div class="form-group">
             <label for="publishedDate" class="col-form-label">Published Year</label>
-            <InputNumber TValue="int" id="publishedDate" class="form-control" @bind-Value="_book.PublicationYear" />
+            <InputNumber TValue="int" id="publishedDate" class="form-control" @bind-Value="Book.PublicationYear"/>
         </div>
         <div class="col-3">
-        <button type="submit" class="btn btn-success">AddBook</button>
+            <button type="submit" class="btn btn-success">Add Book</button>
         </div>
     </EditForm>
 </div>
 
 
 @code {
-    private BookModel _book = new();
+    private BookModel? Book { get; set; }
     private List<int> _selectedAuthorIds = new();
     private List<int> _selectedGenreIds = new();
-    private List<AuthorModel?> _availableAuthors = new();
-    private List<GenreModel?> _availableGenres = new();
+    private List<AuthorModel?>? _availableAuthors;
+    private List<GenreModel?>? _availableGenres;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnAfterRender(bool firstRender)
     {
-        _availableAuthors = (await AuthorService.GetAllAsync())?.ToList() ?? new List<AuthorModel?>();
-        _availableGenres = (await GenreService.GetAllAsync())?.ToList() ?? new List<GenreModel?>();
-        await base.OnInitializedAsync();
+        if (firstRender)
+        {
+            _availableAuthors = AuthorService.GetAllAsync().Result?.ToList();
+            _availableGenres = GenreService.GetAllAsync().Result?.ToList();
+            StateHasChanged();
+        }
+        base.OnAfterRender(firstRender);
     }
 
     private async Task AddBook()
     {
+        if (Book is null) return;
         foreach (var selectedAuthor in _selectedAuthorIds)
         {
-            var author = await AuthorService.GetAsync(selectedAuthor);
-            if (author != null)
-                _book.Authors.Add(author);
+            if (_selectedAuthorIds.Count == 0)
+            {
+                Book.Authors = new List<AuthorModel>();
+            }
+            else
+            {
+                var author = await AuthorService.GetAsync(selectedAuthor);
+                if (author != null)
+                    Book.Authors.Add(author);
+            }
         }
         foreach (var selectedGenreId in _selectedGenreIds)
         {
-            var genre = await GenreService.GetAsync(selectedGenreId);
-            if (genre != null)
-                _book.Genres.Add(genre);
+            if (_selectedGenreIds.Count == 0)
+            {
+                Book.Genres = new List<GenreModel>();
+            }
+            else
+            {
+                var genre = await GenreService.GetAsync(selectedGenreId);
+                if (genre != null)
+                    Book.Genres.Add(genre);
+            }
         }
-        await BookService.AddAsync(_book);
+        await BookService.AddAsync(Book);
         NavigationManager.NavigateTo("/books");
     }
+
 }

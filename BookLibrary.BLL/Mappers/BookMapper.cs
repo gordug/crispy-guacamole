@@ -4,6 +4,7 @@ using BookLibrary.DAL.Entities;
 using BookLibrary.Models;
 
 [assembly: InternalsVisibleTo("BookLibrary.BLL.Tests")]
+
 namespace Microsoft.Extensions.DependencyInjection.Mappers;
 
 internal class BookMapper : IMapper<BookModel, Book>
@@ -11,8 +12,9 @@ internal class BookMapper : IMapper<BookModel, Book>
     private readonly IMapper<AuthorModel, Author> _authorMapper;
     private readonly IMapper<GenreModel, Genre> _genreMapper;
 
-    public BookMapper(IMapper<AuthorModel, Author> authorMapper,
-                      IMapper<GenreModel, Genre> genreMapper)
+    public BookMapper(
+        IMapper<AuthorModel, Author> authorMapper,
+        IMapper<GenreModel, Genre> genreMapper)
     {
         _authorMapper = authorMapper;
         _genreMapper = genreMapper;

@@ -9,37 +9,67 @@ namespace BookLibrary.DAL.Repositories;
 
 internal class BookRepository : Repository<Book>
 {
-
-    public BookRepository(LibraryContext context) : base(context) { }
-
-    public override async ValueTask<Book?> GetAsync(int id)
+    public BookRepository(LibraryContext context)
+        : base(context)
     {
-        return await Context.Books!
-                            .Include<Book, List<Author?>?>(book => book!.Authors)
-                            .Include(book => book.Genres)
-                            .FirstOrDefaultAsync(book => book.ID == id);
-    }
-    
-    public override async Task<IEnumerable<Book?>> GetAllAsync()
-    {
-        return await Context.Books!
-                            .Include<Book, List<Author?>?>(book => book!.Authors)
-                            .Include(book => book.Genres)
-                            .ToListAsync();
     }
 
-    public override Task<Book?> AddAsync(Book? entity)
+    public override ValueTask<Book?> GetAsync(int id)
     {
-        if (entity is null) return Task.FromResult<Book?>(null);
-        var book = Context.Books!.Add(new Book
-        (
-            entity.Title,
-            entity.Authors?.Select(author => Context.Authors.Find(author.ID)).ToList(),
-            entity.Genres?.Select(genre => Context.Genres.Find(genre.ID)).ToList(),
-            entity.Isbn,
-            entity.PublicationYear
-        ));
+        return ValueTask.FromResult(Context.Books!
+                                           .Include<Book, List<Author?>?>(book => book!.Authors)
+                                           .Include(book => book.Genres)
+                                           .FirstOrDefault(book => book.ID == id));
+    }
+
+    public override ValueTask<IEnumerable<Book?>> GetAllAsync()
+    {
+        return ValueTask.FromResult<IEnumerable<Book?>>(
+                                                        Context.Books!
+                                                               .Include<Book, List<Author?>?>(book => book!.Authors)
+                                                               .Include(book => book.Genres)
+                                                               .AsEnumerable());
+    }
+
+    public override ValueTask<Book?> AddAsync(Book? entity)
+    {
+        if (entity is null)
+        {
+            return ValueTask.FromResult<Book?>(null);
+        }
+
+        var authors = entity.Authors?.Select(author => Context.Authors.Find(author?.ID)).ToList();
+        var genres = entity.Genres?.Select(genre => Context.Genres.Find(genre?.ID)).ToList();
+        var book = Context.Books!.Add(new Book(
+                                               entity.Title,
+                                               authors,
+                                               genres,
+                                               entity.Isbn,
+                                               entity.PublicationYear
+                                              ));
         Context.SaveChanges();
-        return Task.FromResult(book.Entity);
+        return ValueTask.FromResult(book.Entity);
+    }
+
+    public override ValueTask<Book?> UpdateAsync(Book? entity)
+    {
+        if (entity is null)
+        {
+            return ValueTask.FromResult<Book?>(null);
+        }
+
+        var book = Context.Books!.Find(entity.ID);
+        if (book is null)
+        {
+            return ValueTask.FromResult<Book?>(null);
+        }
+
+        book.Title = entity.Title;
+        book.Authors = entity.Authors?.Select(author => Context.Authors.Find(author?.ID)).ToList();
+        book.Genres = entity.Genres?.Select(genre => Context.Genres.Find(genre?.ID)).ToList();
+        book.Isbn = entity.Isbn;
+        book.PublicationYear = entity.PublicationYear;
+        Context.SaveChanges();
+        return ValueTask.FromResult<Book?>(book);
     }
 }

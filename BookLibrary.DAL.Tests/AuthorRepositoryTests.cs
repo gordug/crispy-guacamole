@@ -12,8 +12,8 @@ public class AuthorRepositoryTests
     public AuthorRepositoryTests()
     {
         var options = new DbContextOptionsBuilder<LibraryContext>()
-            .UseInMemoryDatabase("BookLibrary")
-            .Options;
+                      .UseInMemoryDatabase("BookLibrary")
+                      .Options;
 
         // Instantiate Repository with mocked DbContext
         _repository = new AuthorRepository(new LibraryContext(options));
@@ -35,7 +35,11 @@ public class AuthorRepositoryTests
     private async Task SetupMockData()
     {
         var author = await _repository.GetAsync(_testAuthor.ID);
-        if (author is { }) return;
+        if (author is { })
+        {
+            return;
+        }
+
         await _repository.AddAsync(_testAuthor);
     }
 

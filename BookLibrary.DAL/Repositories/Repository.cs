@@ -6,45 +6,50 @@ internal abstract class Repository<T> : IRepository<T> where T : class, IEntity
 {
     internal readonly LibraryContext Context;
 
-    protected Repository(LibraryContext context)
+    internal Repository(LibraryContext context)
         => Context = context;
 
-    public virtual Task<IEnumerable<T?>> GetAllAsync()
+    public virtual ValueTask<IEnumerable<T?>> GetAllAsync()
     {
-        return Task.FromResult<IEnumerable<T?>>(Context.Set<T>());
+        return ValueTask.FromResult<IEnumerable<T?>>(Context.Set<T>());
     }
 
     public virtual async ValueTask<T?> GetAsync(int id)
     {
-        return await Context.FindAsync<T>(id);
+        return await ValueTask.FromResult(Context.Find<T>(id));
     }
 
-    public virtual async Task<T?> AddAsync(T? entity)
+    public virtual ValueTask<T?> AddAsync(T? entity)
     {
         if (entity is null)
         {
             throw new ArgumentNullException(nameof(entity));
         }
 
-        await Context.Set<T>().AddAsync(entity);
-        await Context.SaveChangesAsync();
-        return entity;
+        Context.Set<T>().Add(entity);
+        Context.SaveChanges();
+        return ValueTask.FromResult<T?>(entity);
     }
 
-    public virtual async Task<T?> UpdateAsync(T entity)
+    public virtual ValueTask<T?> UpdateAsync(T? entity)
     {
-        var entityToUpdate = await Context.FindAsync<T>(entity.ID).ConfigureAwait(false);
+        if (entity is null)
+        {
+            return ValueTask.FromResult<T?>(default);
+        }
+
+        var entityToUpdate = Context.Find<T>(entity.ID);
         if (entityToUpdate is null)
         {
-            return entityToUpdate;
+            return ValueTask.FromResult(entityToUpdate);
         }
 
         Context.Entry(entityToUpdate).CurrentValues.SetValues(entity);
-        await Context.SaveChangesAsync();
-        return entity;
+        Context.SaveChanges();
+        return ValueTask.FromResult<T?>(entity);
     }
 
-    public virtual async Task<T?> DeleteAsync(int id)
+    public virtual async ValueTask<T?> DeleteAsync(int id)
     {
         var entity = await Context.FindAsync<T>(id).ConfigureAwait(false);
         if (entity is null)

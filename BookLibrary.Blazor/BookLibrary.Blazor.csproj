@@ -7,16 +7,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\BookLibrary.BLL\BookLibrary.BLL.csproj" />
-      <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj" />
-      <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj" />
+        <ProjectReference Include="..\BookLibrary.BLL\BookLibrary.BLL.csproj"/>
+        <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj"/>
+        <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.9">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
+
 
 </Project>

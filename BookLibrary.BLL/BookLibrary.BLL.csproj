@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj" />
-        <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj" />
+        <ProjectReference Include="..\BookLibrary.DAL\BookLibrary.DAL.csproj"/>
+        <ProjectReference Include="..\BookLibrary.Models\BookLibrary.Models.csproj"/>
     </ItemGroup>
 
     <ItemGroup>

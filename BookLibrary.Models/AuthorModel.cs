@@ -2,18 +2,27 @@
 
 public class AuthorModel
 {
-    public AuthorModel(string firstName, string lastName)
+    public AuthorModel(
+        string firstName,
+        string lastName)
     {
         Id = 0;
         FirstName = firstName;
         LastName = lastName;
     }
 
-    public AuthorModel(int id, string firstName, string lastName)
+    public AuthorModel(
+        int id,
+        string firstName,
+        string lastName)
     {
         Id = id;
         FirstName = firstName;
         LastName = lastName;
+    }
+
+    public AuthorModel()
+    {
     }
 
     public int Id { get; set; }

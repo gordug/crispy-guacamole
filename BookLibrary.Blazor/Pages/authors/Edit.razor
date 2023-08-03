@@ -1,0 +1,72 @@
+﻿@page "/authors/edit/{id:int}"
+@inject ILibraryService<AuthorModel> LibraryService
+@inject NavigationManager NavigationManager
+
+<div class="display-2">Edit Author</div>
+@if (AuthorModel is null)
+{
+    <div class="spinner-border" role="status">
+    </div>
+    <span class="sr-only">Loading...</span>
+}
+else
+{
+    <EditForm Model="AuthorModel" OnValidSubmit="() => EditAuthor(AuthorModel)">
+        <div class="table">
+            <div class="row">
+                <div class="col-3">
+                    <label for="firstname" class="form-label">Firstname</label>
+                </div>
+                <div class="col-9">
+                    <InputText id="firstname" @bind-Value="AuthorModel.FirstName" class="form-text"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-3">
+                    <label for="surname" class="form-label">Surname</label>
+                </div>
+                <div class="col-9">
+                    <InputText id="surname" @bind-Value="AuthorModel.LastName" class="form-text"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-3">
+                <button type="submit" class="btn btn-success">Edit Author</button>
+            </div>
+        </div>
+    </EditForm>
+}
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+
+    private AuthorModel? AuthorModel { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (Id == 0)
+                NavigationManager.NavigateTo("/authors/add");
+            else
+            {
+                AuthorModel = LibraryService.GetAsync(Id).Result;
+            }
+            if (AuthorModel == null)
+            {
+                NavigationManager.NavigateTo("/authors/add");
+            }
+        }
+        base.OnAfterRender(firstRender);
+    }
+
+    private async Task EditAuthor(AuthorModel authorModel)
+    {
+        await LibraryService.UpdateAsync(authorModel);
+        NavigationManager.NavigateTo("/authors");
+    }
+
+}
